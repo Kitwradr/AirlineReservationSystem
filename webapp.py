@@ -16,8 +16,8 @@ DATABASE = 'C://Users//suhas//Desktop//5th Sem//LabProject//Login_v11//Login_v11
 
 @app.route('/')
 def welcome():
-    print("inside")
-    return render_template('dashboard.html')
+    print("inside welcome in flask")
+    return render_template('index.html')
 
 @app.teardown_appcontext
 def close_connection(exception):
@@ -44,7 +44,39 @@ def returnjson_file():
 
     return "<h1>HEllo world<h1>"
 
-    
+@app.route('/loginclick',methods=['GET','POST'])
+def loginClick():
+    print('inside login click')
+    return render_template('dashboard.html')   
+
+@app.route('/login',methods=['GET','POST'])
+def login():
+    print('inside login click')
+    return render_template('dashboard.html') 
+
+@app.route('/booking.html',methods=['GET','POST'])
+def bookingpage():
+    print('inside login click')
+    return render_template('booking.html') 
+
+@app.route('/cancel.html',methods=['GET','POST'])
+def cancel():
+    print('inside login click')
+    return render_template('cancel.html') 
+
+@app.route('/searchforflights.html',methods=['GET','POST'])
+def searchflight():
+    print('inside login click')
+    return render_template('searchforflights.html')
+
+@app.route('/html/dashboard.html',methods=['GET','POST'])
+def dashboard():
+    print('inside login click')
+    return render_template('dashboard.html')
+
+@app.route('/confirmbooking',methods=['GET','POST'])
+def confirmClick():
+    return render_template('payment.html')
 
   
 

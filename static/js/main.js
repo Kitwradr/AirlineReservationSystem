@@ -58,7 +58,7 @@
 
 function loginClick(){
     location.href = "../html/dashboard.html";
-    console.log("Inside function");
+    console.log("Inside login function");
     alert('alert');
 }
 
@@ -70,9 +70,73 @@ function searchClick(){
     var date = document.getElementById("date").value;
     console.log(departure,destination,date);
 
-    var json_obj = JSON.parse(Get("https://localhost:5000/dbhandling/displayflights"))
+    if(departure.length ==0){
+        alert('Enter departure');
+        return;
+    }
 
-    this.document.getElementById("tablebody").innerhtml = jsonobj.data;
+    if(destination.length ==0){
+        alert('Enter departure');
+        return;
+    }
+
+    if(date.length ==0){
+        alert('Enter departure');
+        return;
+    }
+
+    //var json_obj = JSON.parse(Get("https://localhost:5000/dbhandling/displayflights"))
+
+    var tbdy = this.document.getElementById("tablebody") ;
+
+
+
+    tbdy.innerHTML = `<tr>
+                <td>321</td>
+                <td>Kingfisher Airlines</td>
+                
+                <td>3:00</td>
+                <td>30</td>
+                <td>$36,738</td>
+            </tr>
+            <tr>
+                <td>426</td>
+                <td>Air India</td>
+                
+                <td>4:15</td>
+                <td>78</td>
+                <td>$23,789</td>
+            </tr>
+            <tr>
+                <td>901</td>
+                <td>Spice Jet</td>
+                
+                <td>11:30</td>
+                <td>23</td>
+                <td>$56,142</td>
+            </tr>
+            <tr>
+                <td>234</td>
+                <td>Jet Airways</td>
+                
+                <td>15:30</td>
+                <td>200</td>
+                <td>$38,735</td>
+            </tr>
+            <tr>
+                <td>786</td>
+                <td>Vistara</td>
+                
+                <td>21:30</td>
+                <td>67</td>
+                <td>$63,542</td>
+            </tr>
+            
+             `;
+
+
+
+
     
 
 }
@@ -85,6 +149,17 @@ function Get(yourUrl){
 }
 
 function goClick(){
+    alert('go clicked')
+
+    var flight_id = document.getElementById("flightid").value;
+    var classBook = document.getElementById("classbooking").value;
+    var numTicket = document.getElementById("numberticket").value;
+
+    console.log(flight_id,classBook,numTicket)
+
+    var cost = this.document.getElementById("price");
+
+    cost.innerHTML = 'Total cost(INR): 4000'
 
 }
 
