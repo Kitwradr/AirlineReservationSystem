@@ -97,7 +97,7 @@ function searchClick(){
                 
                 <td>3:00</td>
                 <td>30</td>
-                <td>$36,738</td>
+                <td>Rs 3,673</td>
             </tr>
             <tr>
                 <td>426</td>
@@ -105,7 +105,7 @@ function searchClick(){
                 
                 <td>4:15</td>
                 <td>78</td>
-                <td>$23,789</td>
+                <td>Rs 5,021</td>
             </tr>
             <tr>
                 <td>901</td>
@@ -113,7 +113,7 @@ function searchClick(){
                 
                 <td>11:30</td>
                 <td>23</td>
-                <td>$56,142</td>
+                <td>Rs 4,599</td>
             </tr>
             <tr>
                 <td>234</td>
@@ -121,7 +121,7 @@ function searchClick(){
                 
                 <td>15:30</td>
                 <td>200</td>
-                <td>$38,735</td>
+                <td>Rs 3,399</td>
             </tr>
             <tr>
                 <td>786</td>
@@ -129,7 +129,7 @@ function searchClick(){
                 
                 <td>21:30</td>
                 <td>67</td>
-                <td>$63,542</td>
+                <td>Rs 4,599</td>
             </tr>
             
              `;
