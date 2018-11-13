@@ -13,7 +13,7 @@ app = Flask(__name__,template_folder="templates/html")
 #   database="footballmanagement"
 # )
 # print(mydb)
-DATABASE = 'C://Users//suhas//Desktop//5th Sem//LabProject//Login_v11//Login_v11//airline_reservation.db'
+DATABASE = 'C://Users//suhas//Documents//GitHub//AirlineReservationSystem//airline_reservation.db'
 
 @app.route('/')
 def welcome():
@@ -80,6 +80,23 @@ def dashboard():
     print('inside login click')
     return render_template('dashboard.html')
 
+@app.route('/dashboard.html',methods=['GET','POST'])
+def dashboard1():
+    print('inside login click')
+    return render_template('dashboard.html')
+
+@app.route('/maps.html',methods=['GET','POST'])
+def mapsdisplay():
+    print('inside login click')
+    return render_template('maps.html')
+
+@app.route('/registration.html',methods=['GET','POST'])
+def registration():
+    return render_template('registration.html')
+
+@app.route('/registrationclick',methods=['GET','POST'])
+def registrationclick():
+    return render_template('index.html')
 @app.route('/confirmbooking',methods=['GET','POST'])
 def confirmClick():
 
@@ -97,7 +114,7 @@ def confirmClick():
             try:
                 cur = con.cursor()
                 import pdb; #pdb.set_trace()
-                cur.execute("INSERT INTO TICKET(FLIGHT,USERNAME,TIMEOFBOOKING,PAYMENTSTATUS,PRICE)VALUES(?,?,DATETIME('NOW'),?,())",( id1,username,paymentstatus))
+                cur.execute("INSERT INTO TICKET(FLIGHT,USERNAME,TIMEOFBOOKING,PAYMENTSTATUS,PRICE)VALUES(?,?,DATETIME('NOW'),?,?*(SELECT EPRICE FROM FLIGHT WHERE FLIGHTID=? ))",( id1,username,paymentstatus,numticket,id1))
                 con.commit()
 
                 msg = "Registered Successfully"
