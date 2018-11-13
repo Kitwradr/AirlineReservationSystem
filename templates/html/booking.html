@@ -34,13 +34,13 @@
                 </div>
                 <ul class="nav">
                     <li class="nav-item active">
-                        <a class="nav-link" href="dashboard.html">
+                        <a class="nav-link" href="/dashboard">
                             <i class="nc-icon nc-chart-pie-35"></i>
                             <p>Dashboard</p>
                         </a>
                     </li>
                     <li>
-                        <a class="nav-link" href="./user.html">
+                        <a class="nav-link" href="/user">
                             <i class="nc-icon nc-circle-09"></i>
                             <p>User Profile</p>
                         </a>
@@ -54,7 +54,7 @@
                     <li>
                         <a class="nav-link" href="./booking.html">
                             <i class="nc-icon nc-paper-2"></i>
-                            <p>Flight BOoking</p>
+                            <p>Flight Booking</p>
                         </a>
                     </li>
                     
@@ -144,21 +144,22 @@
             <!-- End Navbar -->
             <div class="content">
                 <div class="container-fluid">
+                    <form action="/confirmbooking" id="form1" method="POST">
                     <div class="row">
                             <div id = "container1" class="form-group">
                                     <label for="usr">Flight ID </label>
-                                    <input type="text" class="form-control" id="flightid">
+                                    <input type="text" class="form-control" id="flightid" name="flightid">
                                   </div>
                                   <div id = "container1" class="form-group">
                                     <label for="pwd">Number of Tickets</label>
-                                    <input type="text" class="form-control" id="numberticket">
+                                    <input type="text" class="form-control" id="numberticket" name="numticket">
                             </div>
                        
                     </div>
                     <div class="row">
                             <div id = "container1" class="form-group">
                                     <label for="pwd">Class(Economy/Business)</label>
-                                    <input type="text" class="form-control" id="classbooking">
+                                    <input type="text" class="form-control" id="classbooking" name="class">
                             </div>
                             <div>
                                     <button id="go" type="button" class="btn btn-default" onclick="goClick()">
@@ -166,6 +167,7 @@
                                     </button>
                                   </div>
                     </div>
+                    </form>
                     <div class="row">
                      
                             <h3 id = "price">Total cost(INR): 0</h3>
@@ -175,12 +177,13 @@
                     <div class="row">
                             <div class="col-lg-12">
                                 <form action="/confirmbooking" , method="POST">
-                                    <button id="confirm" type="submit" class="btn btn-default float-right" onclick="confirmClick()">
+                                    <button id="confirm" type="submit" form="form1" class="btn btn-default float-right">
                                       <span class="glyphicon glyphicon-search"></span> Confirm 
                                     </button>
                                 </form>
-                                  </div>
+                            </div>
                     </div>
+                    
                 </div>
             </div>
            

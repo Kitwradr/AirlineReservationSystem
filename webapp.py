@@ -1,4 +1,5 @@
 import os
+from flask import *
 from flask import Flask,redirect,url_for,request,render_template
 from flask import g
 import sqlite3
@@ -62,20 +63,50 @@ def bookingpage():
 @app.route('/cancel.html',methods=['GET','POST'])
 def cancel():
     print('inside login click')
-    return render_template('cancel.html') 
+    return render_template ('cancel.html') 
 
 @app.route('/searchforflights.html',methods=['GET','POST'])
 def searchflight():
     print('inside login click')
     return render_template('searchforflights.html')
 
-@app.route('/html/dashboard.html',methods=['GET','POST'])
+@app.route('/user',methods=['GET','POST'])
+def userdisplay():
+    print('inside login click')
+    return render_template('user.html')
+
+@app.route('/dashboard',methods=['GET','POST'])
 def dashboard():
     print('inside login click')
     return render_template('dashboard.html')
 
 @app.route('/confirmbooking',methods=['GET','POST'])
 def confirmClick():
+
+    id1 = request.form['flightid']
+    numticket = request.form['numticket']
+    classbook = 'EPRICE'
+    username = "Suhas"
+    paymentstatus = "completed"
+
+    print(id1,numticket,classbook,username,paymentstatus)
+
+
+    # json_input  = request.get_json()
+    with sqlite3.connect('airline_reservation.db') as con:
+            try:
+                cur = con.cursor()
+                import pdb; #pdb.set_trace()
+                cur.execute("INSERT INTO TICKET(FLIGHT,USERNAME,TIMEOFBOOKING,PAYMENTSTATUS,PRICE)VALUES(?,?,DATETIME('NOW'),?,())",( id1,username,paymentstatus))
+                con.commit()
+
+                msg = "Registered Successfully"
+            except:
+                con.rollback()
+                msg = "Error occured"
+            #con.close()
+            print( msg)
+
     return render_template('payment.html')
 
   
