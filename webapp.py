@@ -3,6 +3,7 @@ from flask import *
 from flask import Flask,redirect,url_for,request,render_template
 from flask import g
 import sqlite3
+import pdb
 
 app = Flask(__name__,template_folder="templates/html")
 
@@ -96,6 +97,29 @@ def registration():
 
 @app.route('/registrationclick',methods=['GET','POST'])
 def registrationclick():
+    pdb.set_trace()
+    name = request.form['name']
+    username = request.form['username']
+    bdate = request.form['birthday']
+    gender = request.form['gender']
+    email = request.form['email']
+    phone = request.form['phone']
+    print(name,username,bdate,gender,email,phone)
+
+    with sqlite3.connect('airline_reservation.db') as con:
+            try:
+                cur = con.cursor()
+                 #pdb.set_trace()
+                cur.execute("INSERT INTO TICKET(FLIGHT,USERNAME,TIMEOFBOOKING,PAYMENTSTATUS,PRICE)VALUES(?,?,DATETIME('NOW'),?,?*(SELECT EPRICE FROM FLIGHT WHERE FLIGHTID=? ))",( id1,username,paymentstatus,numticket,id1))
+                con.commit()
+
+                msg = "Registered Successfully"
+            except:
+                con.rollback()
+                msg = "Error occured"
+            #con.close()
+            print( msg)
+
     return render_template('index.html')
 @app.route('/confirmbooking',methods=['GET','POST'])
 def confirmClick():
@@ -113,7 +137,7 @@ def confirmClick():
     with sqlite3.connect('airline_reservation.db') as con:
             try:
                 cur = con.cursor()
-                import pdb; #pdb.set_trace()
+                 #pdb.set_trace()
                 cur.execute("INSERT INTO TICKET(FLIGHT,USERNAME,TIMEOFBOOKING,PAYMENTSTATUS,PRICE)VALUES(?,?,DATETIME('NOW'),?,?*(SELECT EPRICE FROM FLIGHT WHERE FLIGHTID=? ))",( id1,username,paymentstatus,numticket,id1))
                 con.commit()
 

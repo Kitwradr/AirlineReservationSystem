@@ -1,7 +1,5 @@
 import sqlite3
 import json
-from Transaction import *
-from Order import *
 import hashlib, os
 
 class Customer(object):
@@ -25,18 +23,19 @@ class Customer(object):
 
         
     def _login(self,email, password):
-        with sqlite3.connect('database.db') as con
-        try:
-        	cur=con.cursor()
-        	cur.execute('SELECT password from PASSENGER WHERE email=?',(email,))
-        	data=cur.fetchall()
-        	if(data==password)
-        	return True
-        	else
-        	return False
-
-
-        def register(password, email, firstName, lastName, address1, address2, zipcode, city, state, country, phone):
+        with sqlite3.connect('database.db') as con:
+            try:
+                cur=con.cursor()
+                cur.execute('SELECT password from PASSENGER WHERE email=?',(email,))
+                data=cur.fetchall()
+                if(data==password):
+                    return True
+                else:
+                    return False
+            except:
+                pass
+                
+    def _register(self,password, email, firstName, lastName, address1, address2, zipcode, city, state, country, phone):
         with sqlite3.connect('database.db') as con:
             try:
                 cur = con.cursor()
@@ -47,5 +46,5 @@ class Customer(object):
             except:
                 con.rollback()
                 msg = "Error occured"
-        con.close()
+   
         return msg
