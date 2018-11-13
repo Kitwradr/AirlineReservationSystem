@@ -165,4 +165,32 @@ function goClick(){
 
 function confirmClick(){
 
+    var flight_id = document.getElementById("flightid").value;
+    var classBook = document.getElementById("classbooking").value;
+    var numTicket = document.getElementById("numberticket").value;
+
+    var username = "suhas";
+	//json_={"name":name,"qty":qty,"type":option}
+	var request=new XMLHttpRequest();
+
+	request.onreadystatechange=function(){
+        if(request.readyState===XMLHttpRequest.DONE){
+            if(request.status===200)
+            {
+                alert('Updated Successfully');
+            }
+            else{
+                alert('Network Error');
+            }
+            
+    }
+    };
+    request.open("POST",'http://localhost:5000/confirmbooking',true);
+    request.setRequestHeader('Content-Type','application/json');
+    request.send(JSON.stringify({id:flight_id,class:classBook,username:username,numtickets:numTicket}));
+
+    console.log("Inside confirm click");
+
+
+
 }
