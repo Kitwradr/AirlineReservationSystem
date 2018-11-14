@@ -57,9 +57,25 @@
 })(jQuery);
 
 function loginClick(){
-    location.href = "../html/dashboard.html";
+
+    var email = document.getElementById("loginfield").value;
+    var password = document.getElementById("passwordfield").value;
+
+    console.log(email,password);
+
+    if(email == "suhas.2ab@gmail.com" && password == "password"){
+        window.location.href = "/html/dashboard.html";   
+    }
+    else if(email == "kurt@gmail.com" && password == "kenya"){
+        location.href = "/html/dashboard.html";
+    }
+    else{
+        alert('Incorrect username or password')
+    }
+
+    
     console.log("Inside login function");
-    alert('alert');
+
 }
 
 
@@ -69,6 +85,12 @@ function searchClick(){
     var destination = document.getElementById("destination").value;
     var date = document.getElementById("date").value;
     console.log(departure,destination,date);
+    var condition = false;
+
+    if(departure == "Bangalore" && destination =="Mumbai" ){
+        condition = true;
+    
+    }
 
     if(departure.length ==0){
         alert('Enter departure');
@@ -76,22 +98,29 @@ function searchClick(){
     }
 
     if(destination.length ==0){
-        alert('Enter departure');
+        alert('Enter destination');
         return;
     }
 
     if(date.length ==0){
-        alert('Enter departure');
+        alert('Enter date');
         return;
     }
 
     //var json_obj = JSON.parse(Get("https://localhost:5000/dbhandling/displayflights"))
 
     var tbdy = this.document.getElementById("tablebody") ;
+    tbdy.innerHTML="";
+
+    if(!condition)
+    {
+        alert('No flights were found for this combination')
+    }
 
 
 
-    tbdy.innerHTML = `<tr>
+    if(condition){
+        tbdy.innerHTML = `<tr>
                 <td>321</td>
                 <td>Kingfisher Airlines</td>
                 
@@ -134,6 +163,10 @@ function searchClick(){
             
              `;
 
+    }
+    else{
+
+    }
 
 
 
@@ -193,4 +226,87 @@ function confirmClick(){
 
 
 
+}
+
+function pastbookings(){
+ 
+    var container = document.getElementById("maincontainer");
+
+    container.innerHTML = null;
+
+    var htmlnew = `<h3>Your past bookings</h3>
+    <div id = "ticket1" class="card">
+            <h5 class="card-header">Bangalore - Mumbai</h5>
+            <div class="card-body">
+              <h5 class="card-title">15th August 2018</h5>
+                <br>
+              <button onclick="reviewExperience()" type = "button" class="btn btn-primary" >Review the experience</button>
+            </div>
+        </div>
+        <div id = "ticket2" class="card">
+                <h5 class="card-header">Mumbai - Delhi</h5>
+                <div class="card-body">
+                  <h5 class="card-title">10th January 2017</h5>
+                    <br>
+                  <button onclick="reviewExperience()" type = "button" class="btn btn-primary" >Review the experience</button>
+                </div>
+            </div>`;
+    container.innerHTML = htmlnew;
+
+}
+
+function reviewExperience(){
+
+    var container = document.getElementById("maincontainer");
+
+    container.innerHTML = null;
+
+    var htmlnew = `<div >
+    <form id="reviewform" action="/submitreview" method="POST">
+      <!-- Change starability-basic to different class to see animations. -->
+      <fieldset class="starability-basic">
+        <h4 style="width:300px">Rate the experience</h4>
+        <input type="radio" id="no-rate" class="input-no-rate" name="rating" value="0" checked aria-label="No rating." />
+  
+        <input type="radio" id="rate1" name="rating" value="1" />
+        <label for="rate1">1 star.</label>
+  
+        <input type="radio" id="rate2" name="rating" value="2" />
+        <label for="rate2">2 stars.</label>
+  
+        <input type="radio" id="rate3" name="rating" value="3" />
+        <label for="rate3">3 stars.</label>
+  
+        <input type="radio" id="rate4" name="rating" value="4" />
+        <label for="rate4">4 stars.</label>
+  
+        <input type="radio" id="rate5" name="rating" value="5" />
+        <label for="rate5">5 stars.</label>
+  
+        <span class="starability-focus-ring"></span>
+      </fieldset>
+    
+</div>
+<h4 style="width:800px">Tell us more about your experience</h4>
+
+<textarea style=" height: 200px;" name="reviewparagraph" type="text" form="reviewform" class="form-control" id="usr"></textarea>
+<br>
+<button form="reviewform" style="background-color:darkorchid; color: white" type="submit" class="btn btn-default" onclick="submitreview()">Submit</button>
+</form>
+</div>`;
+
+    container.innerHTML = htmlnew;
+
+
+}
+
+function getreviewsclick(){
+   
+    var flightid = document.getElementById("flightid").value;
+    console.log(flightid);
+}
+
+function submitreview(){
+    alert('Your review was submmitted sucessfully');
+  
 }

@@ -504,3 +504,74 @@ demo = {
 
 
 }
+
+function manageflight(){
+
+    var container = document.getElementById("admincontainer");
+    container.innerHTML = `<h3>Add flights</h3>
+    <div class = "row">
+        <div id = "container1" class="form-group">
+            <label for="usr">Airline </label>
+            <input type="text" class="form-control" id="flightid" name="airline">
+          </div>
+          <div id = "container1" class="form-group">
+            <label for="pwd">Departure Airport</label>
+            <input type="text" class="form-control" id="numberticket" name="departure">
+        </div>
+        <div id = "container1" class="form-group">
+            <label for="pwd">Arrival Airport</label>
+            <input type="text" class="form-control" id="numberticket" name="arrival">
+        </div>
+    </div>
+    <div class="row">
+            <div id = "container1" class="form-group">
+                    <label for="usr">Price </label>
+                    <input type="text" class="form-control" id="flightid" name="airline">
+                  </div>
+                  <div id = "container1" class="form-group">
+                    <label for="pwd">Capacity</label>
+                    <input type="text" class="form-control" id="numberticket" name="departure">
+                </div>
+                <div>
+                        <button id="go" type="button" class="btn btn-default" onclick="addClick()">
+                          <span class="glyphicon glyphicon-search"></span> ADD FLIGHT
+                        </button>
+                      </div>
+
+    </div>
+
+
+    <h3>Remove flights</h3>
+    <div class = "row">
+            <div id = "container1" class="form-group">
+                <label for="usr">Airline </label>
+                <input type="text" class="form-control" id="flightid" name="airline">
+              </div>
+              <div id = "container1" class="form-group">
+                <label for="pwd">Departure Airport</label>
+                <input type="text" class="form-control" id="numberticket" name="departure">
+            </div>
+            <div id = "container1" class="form-group">
+                <label for="pwd">Arrival Airport</label>
+                <input type="text" class="form-control" id="numberticket" name="arrival">
+            </div>
+        </div>
+        <div class="row">
+         
+                    <div>
+                            <button id="go" type="button" class="btn btn-default" onclick="removeClick()">
+                              <span class="glyphicon glyphicon-search"></span> REMOVE FLIGHT
+                            </button>
+                          </div>
+
+        </div>
+                                    `
+
+}
+
+function cancelclick()
+{
+    var ticket = document.getElementById("ticket1");
+    alert('Your booking was successfully cancelled \n The amount will be credited to your account in 2-4 working days')
+    ticket.innerHTML = "";
+}

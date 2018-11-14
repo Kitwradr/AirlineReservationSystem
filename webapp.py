@@ -4,8 +4,16 @@ from flask import Flask,redirect,url_for,request,render_template
 from flask import g
 import sqlite3
 import pdb
+from pymongo import MongoClient
+import json
+
+client = MongoClient()
+db = client.airplaneReviews
+collection = db.reviews
 
 app = Flask(__name__,template_folder="templates/html")
+
+user_id = 12
 
 # mydb = mysql.connector.connect(
 #   host="localhost",
@@ -110,7 +118,7 @@ def registrationclick():
             try:
                 cur = con.cursor()
                  #pdb.set_trace()
-                cur.execute("INSERT INTO TICKET(FLIGHT,USERNAME,TIMEOFBOOKING,PAYMENTSTATUS,PRICE)VALUES(?,?,DATETIME('NOW'),?,?*(SELECT EPRICE FROM FLIGHT WHERE FLIGHTID=? ))",( id1,username,paymentstatus,numticket,id1))
+                cur.execute("INSERT INTO PASSENGER (password, email, firstName, lastName, address1, address2, zipcode, city, state, country, phone) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",("alberquerqe",email,name," ","2nd stage","Vijayanagar","560040","Bangalore","Karnataka","India",phone))
                 con.commit()
 
                 msg = "Registered Successfully"
@@ -121,6 +129,33 @@ def registrationclick():
             print( msg)
 
     return render_template('index.html')
+
+@app.route('/loginadmin',methods=['GET','POST'])
+def displayadminview():
+
+    return render_template('admin.html')
+
+@app.route('/submitreview',methods=['GET','POST'])
+def submmitreview():
+    data = {}
+    rating = request.form['rating']
+    review = request.form['reviewparagraph']
+
+    print(rating,review)
+
+    data['userID'] = user_id
+    data['ticketID'] = "23"
+    data['review'] = review
+    data['flightid'] = "45"
+
+    
+
+    json_data = json.dumps(data)
+    print(collection.insert_one(data).inserted_id)
+
+    return render_template('dashboard.html')
+
+
 @app.route('/confirmbooking',methods=['GET','POST'])
 def confirmClick():
 
