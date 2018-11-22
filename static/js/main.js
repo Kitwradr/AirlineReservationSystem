@@ -64,10 +64,13 @@ function loginClick(){
     console.log(email,password);
 
     if(email == "suhas.2ab@gmail.com" && password == "password"){
-        window.location.href = "/html/dashboard.html";   
+        $.post("/postusername",{
+            username : email
+        });
+        window.location.href = "/login";   
     }
     else if(email == "kurt@gmail.com" && password == "kenya"){
-        location.href = "/html/dashboard.html";
+        location.href = "/login";
     }
     else{
         alert('Incorrect username or password')
@@ -120,47 +123,59 @@ function searchClick(){
 
 
     if(condition){
-        tbdy.innerHTML = `<tr>
+        tbdy.innerHTML = `  
+            <tr onclick = "window.location ='/bookflight?flightid=321' ">
                 <td>321</td>
                 <td>Kingfisher Airlines</td>
                 
                 <td>3:00</td>
                 <td>30</td>
                 <td>Rs 3,673</td>
+                <td>Rs 4,673</td>
             </tr>
-            <tr>
+           
+            
+            <tr onclick = "window.location ='/bookflight?flightid=426' ">
                 <td>426</td>
                 <td>Air India</td>
                 
                 <td>4:15</td>
                 <td>78</td>
                 <td>Rs 5,021</td>
+                <td>Rs 6,021</td>
             </tr>
-            <tr>
+           
+            <tr onclick = "window.location ='/bookflight?flightid=901' ">
+            
                 <td>901</td>
                 <td>Spice Jet</td>
                 
                 <td>11:30</td>
                 <td>23</td>
                 <td>Rs 4,599</td>
+                <td>Rs 6,599</td>
             </tr>
-            <tr>
+           
+            <tr onclick = "window.location ='/bookflight?flightid=234' ">
                 <td>234</td>
                 <td>Jet Airways</td>
                 
                 <td>15:30</td>
                 <td>200</td>
                 <td>Rs 3,399</td>
+                <td>Rs 4,399</td>
             </tr>
-            <tr>
+           
+            <tr onclick = "window.location ='/bookflight?flightid=786' ">
                 <td>786</td>
                 <td>Vistara</td>
                 
                 <td>21:30</td>
                 <td>67</td>
                 <td>Rs 4,599</td>
+                <td>Rs 5,599</td>
             </tr>
-            
+           
              `;
 
     }
@@ -182,11 +197,30 @@ function Get(yourUrl){
 }
 
 function goClick(){
-    alert('go clicked')
+   
 
     var flight_id = document.getElementById("flightid").value;
     var classBook = document.getElementById("classbooking").value;
     var numTicket = document.getElementById("numberticket").value;
+
+    if(flight_id.length == 0){
+        alert('Enter flight ID')
+        return
+    }
+
+    if(classBook.length == 0){
+        alert('Enter booking class')
+        return
+    }
+
+    if(numTicket.length == 0){
+        alert('Enter numTicket')
+        return
+    }
+
+    if(classBook!="Economy" || classBook!="Business" ){
+        alert('Enter business or economy class only!')
+    }
 
     console.log(flight_id,classBook,numTicket)
 
@@ -304,9 +338,69 @@ function getreviewsclick(){
    
     var flightid = document.getElementById("flightid").value;
     console.log(flightid);
+
+    var request=new XMLHttpRequest();
+
+	request.onreadystatechange=function(){
+        if(request.readyState===XMLHttpRequest.DONE){
+            if(request.status===200)
+            {
+                callback(this)
+                alert('Updated Successfully');
+            }
+            else{
+                alert('Network Error');
+            }
+            
+    }
+    };
+    request.open("POST",'http://localhost:5000/retrieveReviews',true);
+    request.setRequestHeader('Content-Type','application/json');
+    request.send(JSON.stringify({flight_id:flightid}));
+}
+
+function callback(request)
+
+{
+    json_returned = request.response;
+
+    var json_obj = JSON.parse(json_returned)
+
+    console.log(JSON.stringify({flight_id:flightid}));
+    console.log(JSON.parse(json_returned) );
+
+    var container_table = document.getElementById("tablebody");
+    container_table.innerHTML = json_obj.data;
+
 }
 
 function submitreview(){
     alert('Your review was submmitted sucessfully');
   
+}
+
+function manageReviews(){
+
+    var container = document.getElementById("admincontainer");
+
+    container.innerHTML = null;
+    var htmlnew =` <h4>Enter Flight ID</h4>
+                   
+    <input id="flightid" style="padding:5px" type="text">
+    <button onclick="getreviewsclick()" class="btn btn-primary" >Get reviews</button>
+    <div class="card-body table-responsive">
+                                <table class="table table-hover table-striped"> 
+                                    <col width='300'>                                           
+                              <thead>                               
+                                  <th>Rating</th>
+                                  <th>Review</th>                                                                                              
+                             </thead>
+                              <tbody id="tablebody">
+                             </tbody>
+                            </table>
+                        </div>`;
+
+    container.innerHTML = htmlnew;
+
+
 }

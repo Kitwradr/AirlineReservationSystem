@@ -59,20 +59,44 @@ def loginClick():
     print('inside login click')
     return render_template('dashboard.html')   
 
+@app.route('/postusername',methods=['POST'])
+def postusername():
+
+    session.username = request.form['username']
+    print("session username = "+session.username)
+    return session.username
+
+
 @app.route('/login',methods=['GET','POST'])
 def login():
     print('inside login click')
     return render_template('dashboard.html') 
 
-@app.route('/booking.html',methods=['GET','POST'])
+@app.route('/bookflight',methods=['GET','POST'])
 def bookingpage():
-    print('inside login click')
-    return render_template('booking.html') 
+    flightid = request.args.get('flightid')
+    print('inside bookflight flightid = '+str(flightid))
+    session.flightid = flightid
+    if(flightid is None):
+        return render_template('booking.html')
+    else:
+        return render_template('booking.html',flightid = flightid)
+  
+    
+
 
 @app.route('/cancel.html',methods=['GET','POST'])
 def cancel():
     print('inside login click')
     return render_template ('cancel.html') 
+
+
+@app.route('/cancel.html',methods=['GET','POST'])
+def cancel():
+    print('inside login click')
+    return render_template ('cancel.html') 
+
+
 
 @app.route('/searchforflights.html',methods=['GET','POST'])
 def searchflight():
@@ -105,7 +129,7 @@ def registration():
 
 @app.route('/registrationclick',methods=['GET','POST'])
 def registrationclick():
-    pdb.set_trace()
+  
     name = request.form['name']
     username = request.form['username']
     bdate = request.form['birthday']
@@ -135,6 +159,33 @@ def displayadminview():
 
     return render_template('admin.html')
 
+@app.route('/retrieveReviews',methods = ['POST','GET'])
+def retrieveReviews():
+    json_input = request.get_json()
+
+    flight_id = json_input["flight_id"]
+
+    print(flight_id)
+
+    res = ""
+    for review in collection.find({'flightid':flight_id}):
+        res+="<tr>"
+        
+        res+="<td>"+str(review["rating"])+"</td>"
+        res+="<td>"+str(review["review"])+"</td>"
+        res+="</tr>"
+
+    print(json.dumps({"status":200,"data":res}))
+
+    return json.dumps({"status":200,"data":res})
+
+@app.route('/generateticket',methods = ['GET','POST'])
+def generateticket():
+    ticketID = 0
+    ticketDetails = ""
+
+    return render_template('ticket.html')
+
 @app.route('/submitreview',methods=['GET','POST'])
 def submmitreview():
     data = {}
@@ -147,6 +198,7 @@ def submmitreview():
     data['ticketID'] = "23"
     data['review'] = review
     data['flightid'] = "45"
+    data['rating'] = rating
 
     
 
