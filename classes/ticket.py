@@ -6,7 +6,7 @@ import hashlib, os
 
 class ticket(Object):
 
-	def getTicket(username,flightid,no_of_tickets,pstatus,grade)
+def getTicket(username,flightid,no_of_tickets,pstatus,grade)
 	 with sqlite3.connect('database.db') as con
 	  try:
 	     cur=con.connect()

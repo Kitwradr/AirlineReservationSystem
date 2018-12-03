@@ -63,26 +63,55 @@ function loginClick(){
 
     console.log(email,password);
 
-    if(email == "suhas.2ab@gmail.com" && password == "password"){
-        $.post("/postusername",{
-            username : email
-        });
-        window.location.href = "/login";   
-    }
-    else if(email == "kurt@gmail.com" && password == "kenya"){
-        location.href = "/login";
-    }
-    else{
-        alert('Incorrect username or password')
+    if(email == ""){
+        alert('Fill email!')
+        return;
     }
 
+    if(password == ""){
+        alert('Fill password!')
+        return;
+    }
+
+
+    // if(email == "suhas.2ab@gmail.com" && password == "password"){
+    //     $.post("/postusername",{
+    //         username : '\"Suhas HE\"',
+    //         'password' : password
+    //     });
+    //     window.location.href = "/login";   
+    // }
+    // else if(email == "kurt@gmail.com" && password == "kenya"){
+    //     location.href = "/login";
+    // }
+    // else{
+    //     alert('Incorrect username or password')
+    // }
+
     
-    console.log("Inside login function");
+    // console.log("Inside login function");
+
+    $.post("/loginClick",
+    {
+        'email':email,
+        'password':password
+    },
+    function(data, status){
+        alert("Data: " + data + "\nStatus: " + status);
+        if(data == "success"){
+            window.location = "/dashboard.html"
+        }
+        else{
+            alert('Incorrect username or password')
+        }
+    });
 
 }
 
 
 function searchClick(){
+
+    var dateReg = /^\d{2}[./-]\d{2}[./-]\d{4}$/ ;
 
     var departure =  document.getElementById("departure").value;
     var destination = document.getElementById("destination").value;
@@ -90,10 +119,19 @@ function searchClick(){
     console.log(departure,destination,date);
     var condition = false;
 
+    if(date.match(dateReg)){
+
+    }
+    else{
+        alert('Incorrect date format . Re Enter date!')
+        return;
+    }
+
     if(departure == "Bangalore" && destination =="Mumbai" ){
         condition = true;
     
     }
+
 
     if(departure.length ==0){
         alert('Enter departure');
@@ -196,6 +234,7 @@ function Get(yourUrl){
     return Httpreq.responseText;          
 }
 
+
 function goClick(){
    
 
@@ -203,30 +242,46 @@ function goClick(){
     var classBook = document.getElementById("classbooking").value;
     var numTicket = document.getElementById("numberticket").value;
 
+    console.log(flight_id,classBook,numTicket)
+
     if(flight_id.length == 0){
-        alert('Enter flight ID')
+        alert('Enter flight ID');
         return
     }
 
     if(classBook.length == 0){
-        alert('Enter booking class')
+        alert('Enter booking class');
         return
     }
 
     if(numTicket.length == 0){
-        alert('Enter numTicket')
+        alert('Enter numTicket');
         return
     }
 
-    if(classBook!="Economy" || classBook!="Business" ){
-        alert('Enter business or economy class only!')
+    if(classBook =="Economy" || classBook =="Business" ){
+
+    }
+    else{
+        alert('Enter business or economy class only!');
     }
 
-    console.log(flight_id,classBook,numTicket)
 
-    var cost = this.document.getElementById("price");
+    $.post("/calculatecost",
+    {'flight_id':flight_id,'numtickets':numTicket,'classBook':classBook},
+    function(data, status){
+        alert("Data: " + data + "\nStatus: " + status);
+        window.costrec = data;
+        console.log(data)
+        var cost = document.getElementById("price");
 
-    cost.innerHTML = 'Total cost(INR): 4000'
+        console.log(window.costrec.toString());
+
+        cost.innerHTML = 'Total cost(INR): '+window.costrec.toString();
+    });
+
+
+    
 
 }
 
@@ -265,6 +320,15 @@ function confirmClick(){
 function pastbookings(){
  
     var container = document.getElementById("maincontainer");
+
+    $.get("/retrieveTickets",
+    
+    function(data, status){
+        alert("Data: " + data + "\nStatus: " + status);
+       
+       
+
+    });
 
     container.innerHTML = null;
 
@@ -403,4 +467,62 @@ function manageReviews(){
     container.innerHTML = htmlnew;
 
 
+}
+
+function registerSubmit(){
+   
+    var name = document.forms["regForm"]["name"].value;
+    var username = document.forms["regForm"]["username"].value;
+    var password = document.forms["regForm"]["password"].value;
+    var repassword = document.forms["regForm"]["repassword"].value;
+    var bday = document.forms["regForm"]["birthday"].value;
+    var email = document.forms["regForm"]["email"].value;
+    var phone = document.forms["regForm"]["phone"].value;
+    var gender  = document.forms["regForm"]["gender"].value;
+
+        
+    if (name == "") {
+        alert("Name must be filled out");
+        return false;
+    }
+    if (username == "") {
+        alert("UserName must be filled out");
+        return false;
+    }
+    if (password == "") {
+        alert("Password must be filled out");
+        return false;
+    }
+    if (repassword == "") {
+        alert("Renter password");
+        return false;
+    }
+    if (phone == "") {
+        alert("Number must be filled out");
+        return false;
+    }
+    if (email == "") {
+        alert("Email must be filled out");
+        return false;
+    }
+    if(password != repassword){
+        alert('passwords must be the same');
+        return false;
+    }
+    console.log(name,username,password,repassword,bday.toString(),gender,email)
+
+   
+
+    $.post("/registrationClick",
+    {'name':name,'username':username,'password':password,'birthday':bday.toString(),'gender':gender,'email':email,'phone':phone},
+    function(data, status){
+        alert("Data: " + data + "\nStatus: " + status);
+        window.location.href = "/";
+        
+    });
+
+    
+    
+
+    return false;
 }

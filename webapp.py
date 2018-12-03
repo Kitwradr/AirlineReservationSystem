@@ -12,6 +12,7 @@ db = client.airplaneReviews
 collection = db.reviews
 
 app = Flask(__name__,template_folder="templates/html")
+app.secret_key = 'random string'
 
 user_id = 12
 
@@ -41,30 +42,26 @@ def get_db():
         db = g._database = sqlite3.connect(DATABASE)
     return db
 
-def query_db(query, args=(), one=False):
-    cur = get_db().execute(query, args)
-    rv = cur.fetchall()
-    cur.close()
-    return (rv[0] if rv else None) if one else rv
 
-@app.route('/dbhandling/displayflights', methods = ['GET'])
-def returnjson_file():
-    for airplane in query_db('select * from airplane'):
-        print(airplane) 
-
-    return "<h1>HEllo world<h1>"
-
-@app.route('/loginclick',methods=['GET','POST'])
+@app.route('/loginClick',methods=['POST'])
 def loginClick():
-    print('inside login click')
-    return render_template('dashboard.html')   
+    
+    email = request.form['email']
+    
+    password = request.form['password']
 
-@app.route('/postusername',methods=['POST'])
-def postusername():
-
-    session.username = request.form['username']
-    print("session username = "+session.username)
-    return session.username
+    print(email,password)
+    with sqlite3.connect('airline_reservation.db') as conn:
+        cur = conn.cursor()
+        cur.execute('SELECT password from PASSENGER WHERE email=?',(email,))
+        data=cur.fetchall()
+        print("password = "+str(data[0][0]))
+        if(data[0][0]==password):
+            session['username'] = request.form['email']
+            print("session username = "+session['username'])
+            return "success"
+        else:
+            return "Failure" 
 
 
 @app.route('/login',methods=['GET','POST'])
@@ -76,7 +73,7 @@ def login():
 def bookingpage():
     flightid = request.args.get('flightid')
     print('inside bookflight flightid = '+str(flightid))
-    session.flightid = flightid
+    session['flightid'] = '\"'+str(flightid)+'\"'
     if(flightid is None):
         return render_template('booking.html')
     else:
@@ -87,62 +84,76 @@ def bookingpage():
 
 @app.route('/cancel.html',methods=['GET','POST'])
 def cancel():
-    print('inside login click')
+  
     return render_template ('cancel.html') 
 
 
-@app.route('/cancel.html',methods=['GET','POST'])
-def cancel():
-    print('inside login click')
-    return render_template ('cancel.html') 
+@app.route('/calculatecost',methods=['GET','POST'])
+def calculatecost():
+    print('inside calculate cost')
+    print("received flight id"+request.form['flight_id'])
+    flightid = request.form['flight_id']
+    numtickets = request.form['numtickets']
+    classBook = request.form['classBook']
+    with sqlite3.connect('airline_reservation.db') as conn:
+        cur = conn.cursor()
+        cur.execute("Select "+numtickets+"*eprice From flight Where flightid="+flightid)
+        costdb = cur.fetchone()
+        print(costdb)
+
+    return str(costdb[0])
+
 
 
 
 @app.route('/searchforflights.html',methods=['GET','POST'])
 def searchflight():
-    print('inside login click')
+  
     return render_template('searchforflights.html')
 
 @app.route('/user',methods=['GET','POST'])
 def userdisplay():
-    print('inside login click')
+  
     return render_template('user.html')
 
 @app.route('/dashboard',methods=['GET','POST'])
 def dashboard():
-    print('inside login click')
+  
     return render_template('dashboard.html')
 
 @app.route('/dashboard.html',methods=['GET','POST'])
 def dashboard1():
-    print('inside login click')
+ 
     return render_template('dashboard.html')
 
 @app.route('/maps.html',methods=['GET','POST'])
 def mapsdisplay():
-    print('inside login click')
+ 
     return render_template('maps.html')
 
 @app.route('/registration.html',methods=['GET','POST'])
 def registration():
     return render_template('registration.html')
 
-@app.route('/registrationclick',methods=['GET','POST'])
+@app.route('/registrationClick',methods=['POST'])
 def registrationclick():
-  
+    print(request.form)
+
     name = request.form['name']
     username = request.form['username']
     bdate = request.form['birthday']
     gender = request.form['gender']
     email = request.form['email']
     phone = request.form['phone']
-    print(name,username,bdate,gender,email,phone)
+    password = request.form['password']
+    print(name,username,bdate,gender,email,phone,password)
 
     with sqlite3.connect('airline_reservation.db') as con:
             try:
                 cur = con.cursor()
-                 #pdb.set_trace()
-                cur.execute("INSERT INTO PASSENGER (password, email, firstName, lastName, address1, address2, zipcode, city, state, country, phone) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",("alberquerqe",email,name," ","2nd stage","Vijayanagar","560040","Bangalore","Karnataka","India",phone))
+                sqlQuery = "Insert into passenger values ('"+str(username)+"','"+str(name)+"','"+str(email)+"','"+str(phone)+"','"+str(gender)+"','"+str(bdate)+"','"+str(password)+"')"
+                print(sqlQuery)
+                cur.execute(sqlQuery)
                 con.commit()
 
                 msg = "Registered Successfully"
@@ -152,7 +163,7 @@ def registrationclick():
             #con.close()
             print( msg)
 
-    return render_template('index.html')
+    return "You were registered sucessfully"
 
 @app.route('/loginadmin',methods=['GET','POST'])
 def displayadminview():
@@ -181,13 +192,38 @@ def retrieveReviews():
 
 @app.route('/generateticket',methods = ['GET','POST'])
 def generateticket():
-    ticketID = 0
-    ticketDetails = ""
+    ticket_details = []
+    with sqlite3.connect('airline_reservation.db') as con:
+        try:
+            cur = con.cursor()
+            pdb.set_trace()
+            sql_statement = """SELECT DAIR.CITY,AAIR.CITY,T.PRICE,AP.COMPANY,F.D_DATE,F.FLIGHTID,T.TICKETID
+                                FROM AIRPORT AS DAIR,AIRPORT AS AAIR, FLIGHT AS F, TICKET AS T,AIRPLANE AS AP
+                                WHERE F.FLIGHTID=T.FLIGHT AND DAIR.AIRPORTCODE=F.DEPARTURE AND AAIR.AIRPORTCODE=F.ARRIVAL AND T.USERNAME="Suhas HE" """+" AND AP.AIRPLANEID=F.AIRPLANEID AND F.FLIGHTID="+session['flightid']
+            print(sql_statement)
+            cur.execute(sql_statement)
+            tickets = cur.fetchone()
+      
 
-    return render_template('ticket.html')
+            ticket_details.append(tickets[0]+"  ")
+            ticket_details.append(tickets[1]+"  ")
+            ticket_details.append(tickets[2])
+            ticket_details.append(tickets[3])
+            ticket_details.append(tickets[4])
+            ticket_details.append(str(tickets[5]))
+            ticket_details.append(str(tickets[6]))
+            
+            print("ticket_details = "+str(ticket_details))
+
+            msg = "Registered Successfully"
+        except:
+            msg = "Error occured"
+        print( msg)
+        
+    return render_template('ticket.html',ticket_details = ticket_details)
 
 @app.route('/submitreview',methods=['GET','POST'])
-def submmitreview():
+def submitreview():
     data = {}
     rating = request.form['rating']
     review = request.form['reviewparagraph']
@@ -207,17 +243,48 @@ def submmitreview():
 
     return render_template('dashboard.html')
 
+@app.route('/retrieveTickets',methods=['GET','POST'])
+def retrieveTicketsinfo():
+
+    if 'username' not in session:
+        session['username'] = '\"Suhas HE\"'
+    with sqlite3.connect('airline_reservation.db') as con:
+            try:
+                cur = con.cursor()
+                pdb.set_trace()
+                sql_statement = """SELECT DAIR.CITY,AAIR.CITY,T.PRICE,AP.COMPANY,F.D_DATE
+                                FROM AIRPORT AS DAIR,AIRPORT AS AAIR, FLIGHT AS F, TICKET AS T,AIRPLANE AS AP
+                                WHERE F.FLIGHTID=T.FLIGHT AND DAIR.AIRPORTCODE=F.DEPARTURE AND AAIR.AIRPORTCODE=F.ARRIVAL AND T.USERNAME="Suhas HE" AND AP.AIRPLANEID=F.AIRPLANEID"""
+                print(sql_statement)
+                cur.execute(sql_statement)
+                tickets = cur.fetchall()
+                print(tickets)
+
+                msg = "Registered Successfully"
+            except:
+               
+                msg = "Error occured"
+            #con.close()
+            print( msg)
+            print(json.dumps(tickets))
+
+    return json.dumps(tickets)
+
 
 @app.route('/confirmbooking',methods=['GET','POST'])
 def confirmClick():
-
-    id1 = request.form['flightid']
+    
+    flightid = request.form['flightid']
+    session['flightid'] = '\"'+str(flightid)+'\"'
     numticket = request.form['numticket']
     classbook = 'EPRICE'
-    username = "Suhas"
+    print("session = "+str(session))
+    if 'username' not in session:
+        session['username'] = '\"Suhas HE\"'
+
     paymentstatus = "completed"
 
-    print(id1,numticket,classbook,username,paymentstatus)
+    print(flightid,numticket,classbook,session['username'],paymentstatus)
 
 
     # json_input  = request.get_json()
@@ -225,7 +292,7 @@ def confirmClick():
             try:
                 cur = con.cursor()
                  #pdb.set_trace()
-                cur.execute("INSERT INTO TICKET(FLIGHT,USERNAME,TIMEOFBOOKING,PAYMENTSTATUS,PRICE)VALUES(?,?,DATETIME('NOW'),?,?*(SELECT EPRICE FROM FLIGHT WHERE FLIGHTID=? ))",( id1,username,paymentstatus,numticket,id1))
+                cur.execute("INSERT INTO TICKET(FLIGHT,USERNAME,TIMEOFBOOKING,PAYMENTSTATUS,PRICE)VALUES(?,?,DATETIME('NOW'),?,?*(SELECT EPRICE FROM FLIGHT WHERE FLIGHTID=? ))",( flightid,session['username'],paymentstatus,numticket,flightid))
                 con.commit()
 
                 msg = "Registered Successfully"

@@ -19,16 +19,19 @@
 </head>
 
 <body>
-    {% if ticket_id %}
+    {% if ticket_details %}
     <div class = "row">
         <h3 style="padding-left: 25px" >Your Ticket has been generated</h3> 
     </div>
     
         <div class="card">
                
-            <div class="card-header">Ticket ID {{ticket_id}}</div>
-            <div class="card-body">Content</div> 
-            <div class="card-footer">Footer</div>
+            <div class="card-header">TICKET ID : {{ticket_details[6]}}</div>
+            <div class="card-body">
+                Flight Details : Departure <b>{{ticket_details[0]}}</b>  - Arrival <b>{{ticket_details[1]}}</b>   <br/>
+                Flight ID : {{ticket_details[5]}}
+            </div> 
+            <div class="card-footer">PRICE : INR {{ticket_details[2]}}</div>
             
         </div>
 
