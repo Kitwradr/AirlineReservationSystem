@@ -28,7 +28,7 @@
     -->
             <div class="sidebar-wrapper">
                 <div class="logo">
-                    <a href="http://www.creative-tim.com" class="simple-text">
+                    <a  class="simple-text">
                         PORTAL
                     </a>
                 </div>
@@ -39,12 +39,7 @@
                             <p>Dashboard</p>
                         </a>
                     </li>
-                    <li>
-                        <a class="nav-link" href="./user.html">
-                            <i class="nc-icon nc-circle-09"></i>
-                            <p>User Profile</p>
-                        </a>
-                    </li>
+                
                     <li>
                         <a class="nav-link" href="./table.html">
                             <i class="nc-icon nc-notes"></i>
@@ -54,22 +49,17 @@
                     <li>
                         <a class="nav-link" href="./bookflight">
                             <i class="nc-icon nc-paper-2"></i>
-                            <p>Flight BOoking</p>
+                            <p>Flight Booking</p>
+                        </a>
+                    </li>
+                    <li>
+                        <a onclick="pastbookings()" class="nav-link" >
+                            <i class="nc-icon nc-notes"></i>
+                            <p>Past Bookings</p>
                         </a>
                     </li>
                     
-                    <li>
-                        <a class="nav-link" href="./maps.html">
-                            <i class="nc-icon nc-pin-3"></i>
-                            <p>Maps</p>
-                        </a>
-                    </li>
-                    <li>
-                        <a class="nav-link" href="./notifications.html">
-                            <i class="nc-icon nc-bell-55"></i>
-                            <p>Notifications</p>
-                        </a>
-                    </li>
+              
                     
                 </ul>
             </div>
@@ -88,24 +78,11 @@
                         <ul class="nav navbar-nav mr-auto">
                             <li class="nav-item">
                                 <a href="#" class="nav-link" data-toggle="dropdown">
-                                    <i class="nc-icon nc-palette"></i>
+                                    
                                     <span class="d-lg-none">Dashboard</span>
                                 </a>
                             </li>
-                            <li class="dropdown nav-item">
-                                <a href="#" class="dropdown-toggle nav-link" data-toggle="dropdown">
-                                    <i class="nc-icon nc-planet"></i>
-                                    <span class="notification">5</span>
-                                    <span class="d-lg-none">Notification</span>
-                                </a>
-                                <ul class="dropdown-menu">
-                                    <a class="dropdown-item" href="#">Notification 1</a>
-                                    <a class="dropdown-item" href="#">Notification 2</a>
-                                    <a class="dropdown-item" href="#">Notification 3</a>
-                                    <a class="dropdown-item" href="#">Notification 4</a>
-                                    <a class="dropdown-item" href="#">Another notification</a>
-                                </ul>
-                            </li>
+                            
                             <li class="nav-item">
                                 <a href="#" class="nav-link">
                                     <i class="nc-icon nc-zoom-split"></i>
@@ -119,19 +96,7 @@
                                     <span class="no-icon">Account</span>
                                 </a>
                             </li>
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" href="http://example.com" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    <span class="no-icon">Dropdown</span>
-                                </a>
-                                <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                                    <a class="dropdown-item" href="#">Action</a>
-                                    <a class="dropdown-item" href="#">Another action</a>
-                                    <a class="dropdown-item" href="#">Something</a>
-                                    <a class="dropdown-item" href="#">Something else here</a>
-                                    <div class="divider"></div>
-                                    <a class="dropdown-item" href="#">Separated link</a>
-                                </div>
-                            </li>
+                            
                             <li class="nav-item">
                                 <a class="nav-link" href="#pablo">
                                     <span class="no-icon">Log out</span>
@@ -164,28 +129,33 @@
             </div>
             
             <div class="content">
+            {%if tickets%}
                     <h3>Your bookings</h3>
                 <div  id ="tickets_display" class="container-fluid">
-                        
+                    {% for row in tickets%}    
                     <div  class="row">
                             <div id = "ticket1" class="card">
-                                    <h5 class="card-header">Bangalore - Mumbai</h5>
+                                    <h5 class="card-header">{{row[0]}} - {{row[1]}}</h5>
                                     <div class="card-body">
-                                      <h5 class="card-title">Price:     6640</h5>
-                                      <p class="card-text">Relevant details</p>
+                                      <h5 class="card-title">Price:     {{row[2]}}</h5>
+                                      <p class="card-text">AIRLINE : {{row[3]}}  DATE: {{row[4]}}</p>
                                       <button type = "button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter">Cancel Booking</button>
                                     </div>
-                                </div>
+                            </div>
         
                     </div>
-                    <div class="row">
-                        
-                    </div>
-                    <div>
+                    {%endfor%}
+               
+                <div>
+            {% else %}
+            <h3>You have no bookings!</h3>
+
+            </div>
+            {% endif %}
                         
                     
-                </div>
-            </div>
+                
+            
            
         </div>
     </div>

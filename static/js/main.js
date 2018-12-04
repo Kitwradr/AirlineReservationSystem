@@ -119,19 +119,7 @@ function searchClick(){
     console.log(departure,destination,date);
     var condition = false;
 
-    if(date.match(dateReg)){
-
-    }
-    else{
-        alert('Incorrect date format . Re Enter date!')
-        return;
-    }
-
-    if(departure == "Bangalore" && destination =="Mumbai" ){
-        condition = true;
-    
-    }
-
+ 
 
     if(departure.length ==0){
         alert('Enter departure');
@@ -148,78 +136,79 @@ function searchClick(){
         return;
     }
 
+    if(date.match(dateReg)){
+
+    }
+    else{
+        alert('Incorrect date format . Re Enter date!')
+        return;
+    }
+
     //var json_obj = JSON.parse(Get("https://localhost:5000/dbhandling/displayflights"))
 
     var tbdy = this.document.getElementById("tablebody") ;
     tbdy.innerHTML="";
 
-    if(!condition)
-    {
-        alert('No flights were found for this combination')
-    }
 
 
 
-    if(condition){
-        tbdy.innerHTML = `  
-            <tr onclick = "window.location ='/bookflight?flightid=321' ">
-                <td>321</td>
-                <td>Kingfisher Airlines</td>
+    // if(condition){
+    //     tbdy.innerHTML = `  
+    //         <tr onclick = "window.location ='/bookflight?flightid=321' ">
+    //             <td>321</td>
+    //             <td>Kingfisher Airlines</td>
                 
-                <td>3:00</td>
-                <td>30</td>
-                <td>Rs 3,673</td>
-                <td>Rs 4,673</td>
-            </tr>
+    //             <td>3:00</td>
+    //             <td>30</td>
+    //             <td>Rs 3,673</td>
+    //             <td>Rs 4,673</td>
+    //         </tr>
            
             
-            <tr onclick = "window.location ='/bookflight?flightid=426' ">
-                <td>426</td>
-                <td>Air India</td>
+    //         <tr onclick = "window.location ='/bookflight?flightid=426' ">
+    //             <td>426</td>
+    //             <td>Air India</td>
                 
-                <td>4:15</td>
-                <td>78</td>
-                <td>Rs 5,021</td>
-                <td>Rs 6,021</td>
-            </tr>
+    //             <td>4:15</td>
+    //             <td>78</td>
+    //             <td>Rs 5,021</td>
+    //             <td>Rs 6,021</td>
+    //         </tr>
            
-            <tr onclick = "window.location ='/bookflight?flightid=901' ">
+    //         <tr onclick = "window.location ='/bookflight?flightid=901' ">
             
-                <td>901</td>
-                <td>Spice Jet</td>
+    //             <td>901</td>
+    //             <td>Spice Jet</td>
                 
-                <td>11:30</td>
-                <td>23</td>
-                <td>Rs 4,599</td>
-                <td>Rs 6,599</td>
-            </tr>
+    //             <td>11:30</td>
+    //             <td>23</td>
+    //             <td>Rs 4,599</td>
+    //             <td>Rs 6,599</td>
+    //         </tr>
            
-            <tr onclick = "window.location ='/bookflight?flightid=234' ">
-                <td>234</td>
-                <td>Jet Airways</td>
+    //         <tr onclick = "window.location ='/bookflight?flightid=234' ">
+    //             <td>234</td>
+    //             <td>Jet Airways</td>
                 
-                <td>15:30</td>
-                <td>200</td>
-                <td>Rs 3,399</td>
-                <td>Rs 4,399</td>
-            </tr>
+    //             <td>15:30</td>
+    //             <td>200</td>
+    //             <td>Rs 3,399</td>
+    //             <td>Rs 4,399</td>
+    //         </tr>
            
-            <tr onclick = "window.location ='/bookflight?flightid=786' ">
-                <td>786</td>
-                <td>Vistara</td>
+    //         <tr onclick = "window.location ='/bookflight?flightid=786' ">
+    //             <td>786</td>
+    //             <td>Vistara</td>
                 
-                <td>21:30</td>
-                <td>67</td>
-                <td>Rs 4,599</td>
-                <td>Rs 5,599</td>
-            </tr>
+    //             <td>21:30</td>
+    //             <td>67</td>
+    //             <td>Rs 4,599</td>
+    //             <td>Rs 5,599</td>
+    //         </tr>
            
-             `;
+    //          `;
 
-    }
-    else{
-
-    }
+    // }
 
 
 
@@ -271,13 +260,18 @@ function goClick(){
     {'flight_id':flight_id,'numtickets':numTicket,'classBook':classBook},
     function(data, status){
         alert("Data: " + data + "\nStatus: " + status);
-        window.costrec = data;
-        console.log(data)
+        var obj = JSON.parse(data)
+        console.log(obj)
+       // window.costrec = obj[0];
+        console.log(obj)
         var cost = document.getElementById("price");
 
-        console.log(window.costrec.toString());
+        cost.innerHTML = 'Total cost(INR): '+obj.data1;
 
-        cost.innerHTML = 'Total cost(INR): '+window.costrec.toString();
+        if(obj.data2 != "0")
+        {
+            cost.innerHTML = 'Total cost(INR): '+obj.data1 +"<br/>"+'Discount applied : '+obj.data2;
+        }
     });
 
 

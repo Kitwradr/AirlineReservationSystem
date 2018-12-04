@@ -95,26 +95,81 @@ def calculatecost():
     flightid = request.form['flight_id']
     numtickets = request.form['numtickets']
     classBook = request.form['classBook']
+    username=session['username']
     with sqlite3.connect('airline_reservation.db') as conn:
+        #pdb.set_trace()
         cur = conn.cursor()
-        cur.execute("Select "+numtickets+"*eprice From flight Where flightid="+flightid)
+        sql = "Select "+numtickets+"*eprice From flight Where flightid="+flightid
+        print(sql)
+        cur.execute(sql)
         costdb = cur.fetchone()
         print(costdb)
 
-    return str(costdb[0])
+        cur.execute("""select email
+                from passenger 
+                where username in(
+                SELECT USERNAME  
+                FROM TICKET 
+                GROUP BY USERNAME 
+                ORDER BY COUNT(TICKETID) DESC Limit 5)""")       
+        disc=cur.fetchall()
+        print("disc = "+str(disc))
+        for row in disc :
+            if row[0] == username :
+                discount=0.1
+        temp=costdb[0]-(costdb[0]*discount)
+        temp = round(temp)
+    print(str(temp),str(costdb[0]-temp))
+
+    return json.dumps({'data1':str(temp),'data2':str(costdb[0]-temp)})
 
 
 
 
 @app.route('/searchforflights.html',methods=['GET','POST'])
 def searchflight():
-  
-    return render_template('searchforflights.html')
 
-@app.route('/user',methods=['GET','POST'])
-def userdisplay():
+    source = request.form['source']
+    destination = request.form['destination']
+    date = request.form['date']
   
-    return render_template('user.html')
+    if 'username' not in session:
+        session['username'] = '\"suhashe\"'
+    with sqlite3.connect('airline_reservation.db') as con:
+            try:
+                cur = con.cursor()
+                pdb.set_trace()
+                sql_statement = """SELECT FLIGHTID
+                                    FROM FLIGHT AS F
+                                    WHERE FLIGHTID IN(
+                                        ( SELECT F.FLIGHTID
+                                            FROM FLIGHT AS F, AIRPORT AS AR
+                                            WHERE AR.AIRPORTCODE=F.ARRIVAL AND AR.CITY="?"
+                                            
+                                            INTERSECT
+                                            
+                                            SELECT F.FLIGHTID
+                                            FROM FLIGHT AS F , AIRPORT AS AR
+                                            WHERE AR.AIRPORTCODE=F.DEPARTURE AND AR.CITY="?")
+                                    ) AND F.D_DATE="?"; """
+                print(sql_statement)
+                
+                cur.execute(sql_statement,(source,destination,date))
+
+                flights = cur.fetchall()
+
+                print(flights)
+                
+
+                msg = "Registered Successfully"
+            except:
+               
+                msg = "Error occured"
+            #con.close()
+            print(msg)
+
+    return "The ticket was successfully cancelled"
+
 
 @app.route('/dashboard',methods=['GET','POST'])
 def dashboard():
@@ -126,10 +181,6 @@ def dashboard1():
  
     return render_template('dashboard.html')
 
-@app.route('/maps.html',methods=['GET','POST'])
-def mapsdisplay():
- 
-    return render_template('maps.html')
 
 @app.route('/registration.html',methods=['GET','POST'])
 def registration():
@@ -196,13 +247,15 @@ def generateticket():
     with sqlite3.connect('airline_reservation.db') as con:
         try:
             cur = con.cursor()
-            pdb.set_trace()
+        
             sql_statement = """SELECT DAIR.CITY,AAIR.CITY,T.PRICE,AP.COMPANY,F.D_DATE,F.FLIGHTID,T.TICKETID
                                 FROM AIRPORT AS DAIR,AIRPORT AS AAIR, FLIGHT AS F, TICKET AS T,AIRPLANE AS AP
-                                WHERE F.FLIGHTID=T.FLIGHT AND DAIR.AIRPORTCODE=F.DEPARTURE AND AAIR.AIRPORTCODE=F.ARRIVAL AND T.USERNAME="Suhas HE" """+" AND AP.AIRPLANEID=F.AIRPLANEID AND F.FLIGHTID="+session['flightid']
+                                WHERE F.FLIGHTID=T.FLIGHT AND DAIR.AIRPORTCODE=F.DEPARTURE AND AAIR.AIRPORTCODE=F.ARRIVAL AND T.USERNAME="""+'"'+session['username']+'"'+" AND AP.AIRPLANEID=F.AIRPLANEID AND F.FLIGHTID="+session['flightid']
             print(sql_statement)
             cur.execute(sql_statement)
             tickets = cur.fetchone()
+
+            
       
 
             ticket_details.append(tickets[0]+"  ")
@@ -231,15 +284,12 @@ def submitreview():
     print(rating,review)
 
     data['userID'] = user_id
-    data['ticketID'] = "23"
+    data['ticketID'] = session['ticket_id']
     data['review'] = review
-    data['flightid'] = "45"
+    data['flightid'] = session['flightid']
     data['rating'] = rating
 
-    
-
-    json_data = json.dumps(data)
-    print(collection.insert_one(data).inserted_id)
+    print(data,collection.insert_one(data).inserted_id)
 
     return render_template('dashboard.html')
 
@@ -251,13 +301,17 @@ def retrieveTicketsinfo():
     with sqlite3.connect('airline_reservation.db') as con:
             try:
                 cur = con.cursor()
-                pdb.set_trace()
-                sql_statement = """SELECT DAIR.CITY,AAIR.CITY,T.PRICE,AP.COMPANY,F.D_DATE
+                #pdb.set_trace()
+                sql_statement = """SELECT DAIR.CITY,AAIR.CITY,T.PRICE,AP.COMPANY,F.D_DATE,T.TICKETID,F.FLIGHTID
                                 FROM AIRPORT AS DAIR,AIRPORT AS AAIR, FLIGHT AS F, TICKET AS T,AIRPLANE AS AP
-                                WHERE F.FLIGHTID=T.FLIGHT AND DAIR.AIRPORTCODE=F.DEPARTURE AND AAIR.AIRPORTCODE=F.ARRIVAL AND T.USERNAME="Suhas HE" AND AP.AIRPLANEID=F.AIRPLANEID"""
+                                WHERE F.FLIGHTID=T.FLIGHT AND DAIR.AIRPORTCODE=F.DEPARTURE AND AAIR.AIRPORTCODE=F.ARRIVAL AND T.USERNAME="""+'"'+session['username']+'"'+" AND AP.AIRPLANEID=F.AIRPLANEID"""
                 print(sql_statement)
+                
                 cur.execute(sql_statement)
                 tickets = cur.fetchall()
+                if len(tickets[0])>3:
+                    session['ticket_id'] = tickets[0][5]
+                    session['flightid'] = tickets[0][6]
                 print(tickets)
 
                 msg = "Registered Successfully"
@@ -269,6 +323,35 @@ def retrieveTicketsinfo():
             print(json.dumps(tickets))
 
     return json.dumps(tickets)
+
+@app.route('/retrieveTicketsforCancel',methods=['GET','POST'])
+def retrieveTicketsforCancel():
+
+    if 'username' not in session:
+        session['username'] = '\"suhashe\"'
+    with sqlite3.connect('airline_reservation.db') as con:
+            try:
+                cur = con.cursor()
+                #pdb.set_trace()
+                sql_statement = """SELECT DAIR.CITY,AAIR.CITY,T.PRICE,AP.COMPANY,F.D_DATE,T.TICKETID
+                                FROM AIRPORT AS DAIR,AIRPORT AS AAIR, FLIGHT AS F, TICKET AS T,AIRPLANE AS AP
+                                WHERE T.PRICE>0 AND F.FLIGHTID=T.FLIGHT AND DAIR.AIRPORTCODE=F.DEPARTURE AND AAIR.AIRPORTCODE=F.ARRIVAL AND T.USERNAME="""+'"'+session['username']+'"'+" AND AP.AIRPLANEID=F.AIRPLANEID"""
+                print(sql_statement)
+                cur.execute(sql_statement)
+                tickets = cur.fetchall()
+                session['ticket_id'] = tickets[0][5]
+                print(session)
+                print(tickets)
+
+                msg = "Registered Successfully"
+            except:
+               
+                msg = "Error occured"
+            #con.close()
+            print( msg)
+            print(json.dumps(tickets))
+
+    return render_template('cancel.html',tickets = tickets)
 
 
 @app.route('/confirmbooking',methods=['GET','POST'])
@@ -304,6 +387,33 @@ def confirmClick():
 
     return render_template('payment.html')
 
+@app.route('/cancelTicket',methods=['GET','POST'])
+def cancelTicket():
+
+    if 'username' not in session:
+        session['username'] = '\"suhashe\"'
+    with sqlite3.connect('airline_reservation.db') as con:
+            try:
+                cur = con.cursor()
+                pdb.set_trace()
+                sql_statement = """UPDATE TICKET
+                                SET PRICE = -20 WHERE
+                                TICKETID = ?"""
+                print(sql_statement)
+                
+                cur.execute(sql_statement,(session['ticket_id'],))
+                
+
+                msg = "Registered Successfully"
+            except:
+               
+                msg = "Error occured"
+            #con.close()
+            print(msg)
+
+    return "The ticket was successfully cancelled"
+
+    
   
 
 if __name__ == '__main__': 

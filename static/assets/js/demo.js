@@ -533,7 +533,7 @@ function manageflight(){
                     <input type="text" class="form-control" id="numberticket" name="departure">
                 </div>
                 <div>
-                        <button id="go" type="button" class="btn btn-default" onclick="addClick()">
+                        <button id="go" type="button" class="btn btn-default" onclick="addFlightClick()">
                           <span class="glyphicon glyphicon-search"></span> ADD FLIGHT
                         </button>
                       </div>
@@ -559,7 +559,7 @@ function manageflight(){
         <div class="row">
          
                     <div>
-                            <button id="go" type="button" class="btn btn-default" onclick="removeClick()">
+                            <button id="go" type="button" class="btn btn-default" onclick="removeFlightClick()">
                               <span class="glyphicon glyphicon-search"></span> REMOVE FLIGHT
                             </button>
                           </div>
@@ -571,7 +571,11 @@ function manageflight(){
 
 function cancelclick()
 {
-    var ticket = document.getElementById("ticket1");
-    alert('Your booking was successfully cancelled \n The amount will be credited to your account in 2-4 working days')
-    ticket.innerHTML = "";
+    $.post("/cancelTicket",
+
+    function(data, status){
+        alert("Data: " + data + "\nStatus: " + status);
+        document.location.reload(true);
+    });
+    
 }
