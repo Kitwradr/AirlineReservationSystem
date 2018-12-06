@@ -304,7 +304,7 @@ def retrieveTicketsinfo():
                 #pdb.set_trace()
                 sql_statement = """SELECT DAIR.CITY,AAIR.CITY,T.PRICE,AP.COMPANY,F.D_DATE,T.TICKETID,F.FLIGHTID
                                 FROM AIRPORT AS DAIR,AIRPORT AS AAIR, FLIGHT AS F, TICKET AS T,AIRPLANE AS AP
-                                WHERE F.FLIGHTID=T.FLIGHT AND DAIR.AIRPORTCODE=F.DEPARTURE AND AAIR.AIRPORTCODE=F.ARRIVAL AND F.A_DATE<=DATE('now') AND F.A_TIME<TIME('now') AND T.USERNAME="""+'"'+session['username']+'"'+" AND AP.AIRPLANEID=F.AIRPLANEID"""
+                                WHERE F.FLIGHTID=T.FLIGHT AND DAIR.AIRPORTCODE=F.DEPARTURE AND AAIR.AIRPORTCODE=F.ARRIVAL AND F.A_DATE<=DATE('now') AND T.USERNAME="""+'"'+session['username']+'"'+" AND AP.AIRPLANEID=F.AIRPLANEID"""
                 print(sql_statement)
                 
                 cur.execute(sql_statement)
@@ -335,7 +335,7 @@ def retrieveTicketsforCancel():
                 #pdb.set_trace()
                 sql_statement = """SELECT DAIR.CITY,AAIR.CITY,T.PRICE,AP.COMPANY,F.D_DATE,T.TICKETID
                                 FROM AIRPORT AS DAIR,AIRPORT AS AAIR, FLIGHT AS F, TICKET AS T,AIRPLANE AS AP
-                                WHERE T.PRICE>0 AND F.FLIGHTID=T.FLIGHT AND DAIR.AIRPORTCODE=F.DEPARTURE AND AAIR.AIRPORTCODE=F.ARRIVAL AND T.USERNAME="""+'"'+session['username']+'"'+" AND AP.AIRPLANEID=F.AIRPLANEID"""
+                                WHERE T.PRICE>0 AND F.D_DATE>=DATE('NOW') AND F.FLIGHTID=T.FLIGHT AND DAIR.AIRPORTCODE=F.DEPARTURE AND AAIR.AIRPORTCODE=F.ARRIVAL AND T.USERNAME="""+'"'+session['username']+'"'+" AND AP.AIRPLANEID=F.AIRPLANEID"""
                 print(sql_statement)
                 cur.execute(sql_statement)
                 tickets = cur.fetchall()
