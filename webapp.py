@@ -1,7 +1,5 @@
 import os
 from flask import *
-from flask import Flask,redirect,url_for,request,render_template
-from flask import g
 import sqlite3
 import pdb
 from pymongo import MongoClient
@@ -29,19 +27,6 @@ DATABASE = 'C://Users//suhas//Documents//GitHub//AirlineReservationSystem//airli
 def welcome():
     print("inside welcome in flask")
     return render_template('index.html')
-
-@app.teardown_appcontext
-def close_connection(exception):
-    db = getattr(g, '_database', None)
-    if db is not None:
-        db.close()
-
-def get_db():
-    db = getattr(g, '_database', None)
-    if db is None:
-        db = g._database = sqlite3.connect(DATABASE)
-    return db
-
 
 @app.route('/loginClick',methods=['POST'])
 def loginClick():
@@ -128,33 +113,37 @@ def calculatecost():
 
 @app.route('/searchforflights.html',methods=['GET','POST'])
 def searchflight():
-
-    source = request.form['source']
-    destination = request.form['destination']
-    date = request.form['date']
   
+    return render_template('searchforflights.html')
+
+@app.route('/displayflights',methods=['GET','POST'])
+def displayflight():
+    print(request)
+    source = request.form['source'].upper()
+    destination = request.form['destination'].upper()
+    date = request.form['date']
+    print(source,destination,date)
     if 'username' not in session:
         session['username'] = '\"suhashe\"'
     with sqlite3.connect('airline_reservation.db') as con:
             try:
                 cur = con.cursor()
-                pdb.set_trace()
-                sql_statement = """SELECT FLIGHTID
-                                    FROM FLIGHT AS F
-                                    WHERE FLIGHTID IN(
-                                        ( SELECT F.FLIGHTID
-                                            FROM FLIGHT AS F, AIRPORT AS AR
-                                            WHERE AR.AIRPORTCODE=F.ARRIVAL AND AR.CITY="?"
+                sql_statement = """ SELECT FLIGHTID,AP.COMPANY,F.D_DATE,F.D_TIME,F.A_DATE,F.A_TIME,F.BCAP AS BUSINESS_CLASS_CAPACITY,F.BPRICE AS BUSINESS_CLASS_PRICE,F.ECAP AS ECO_CLASS_CAPACITY,F.EPRICE AS ECO_CLASS_PRICE
+                                    FROM FLIGHT AS F, AIRPLANE AS AP
+                                    WHERE FLIGHTID IN 
+                                    (SELECT F.FLIGHTID
+                                            FROM AIRPORT AS AR
+                                            WHERE AR.AIRPORTCODE=F.ARRIVAL AND AR.CITY=?
                                             
                                             INTERSECT
                                             
                                             SELECT F.FLIGHTID
-                                            FROM FLIGHT AS F , AIRPORT AS AR
-                                            WHERE AR.AIRPORTCODE=F.DEPARTURE AND AR.CITY="?")
-                                    ) AND F.D_DATE="?"; """
-                print(sql_statement)
+                                            FROM  AIRPORT AS AR
+                                            WHERE AR.AIRPORTCODE=F.DEPARTURE AND AR.CITY=?
+                                    ) AND AP.AIRPLANEID=F.AIRPLANEID
+                                    AND F.D_DATE=? """
                 
-                cur.execute(sql_statement,(source,destination,date))
+                cur.execute(sql_statement,(destination,source,date))
 
                 flights = cur.fetchall()
 
@@ -168,7 +157,8 @@ def searchflight():
             #con.close()
             print(msg)
 
-    return "The ticket was successfully cancelled"
+
+    return render_template('searchforflights.html',flights= flights)
 
 
 @app.route('/dashboard',methods=['GET','POST'])
@@ -395,7 +385,7 @@ def cancelTicket():
     with sqlite3.connect('airline_reservation.db') as con:
             try:
                 cur = con.cursor()
-                pdb.set_trace()
+                #pdb.set_trace()
                 sql_statement = """UPDATE TICKET
                                 SET PRICE = -20 WHERE
                                 TICKETID = ?"""
@@ -413,6 +403,63 @@ def cancelTicket():
 
     return "The ticket was successfully cancelled"
 
+@app.route('/addFlight',methods=['POST'])
+def addFlight():
+    destination = request.form['arrival'].upper()
+    departure = request.form['departure'].upper()
+    airline = request.form['airline'].upper()
+    flight_id = request.form['flight_id']
+    eprice = request.form['eprice']
+    bprice = request.form['bprice']
+    dTime = request.form['dTime']
+    dDate = request.form['dDate']
+    capacity = request.form['capacity']
+
+    print(destination,departure,airline,flight_id,eprice,bprice,dTime,dDate,capacity)
+
+
+    with sqlite3.connect('airline_reservation.db') as con:
+            try:
+                cur = con.cursor()
+                pdb.set_trace()
+                sql1 = """SELECT AIRPLANEID
+                            FROM AIRPLANE
+                            WHERE COMPANY=? """
+
+                sql2 = """SELECT AIRPORTCODE
+                            FROM AIRPORT
+                            WHERE CITY=? """
+
+                sql3 = """ SELECT AIRPORTCODE
+                            FROM AIRPORT
+                            WHERE CITY=? """ 
+
+                sql4 = """ INSERT INTO FLIGHT
+VALUES (?,?,?,TIME(?),?,TIME(?),DATE(?),DATE(?),ECAP,BPRICE,EPRICE) """
+              
+                
+                cur.execute(sql2,(departure,))
+                result = cur.fetchall()
+                departure_id = result[0][0]
+
+                cur.execute(sql3,(destination,))
+                result = cur.fetchall()
+                destination_id = result[0][0]
+
+                cur.execute(sql1,(airline,))
+                result = cur.fetchall()
+                airline = result[0][0]
+                
+                print(departure_id,destination_id,airline)
+
+                msg = "Registered Successfully"
+            except:
+               
+                msg = "Error occured"
+            #con.close()
+            print(msg)
+
+    return "The ticket was successfully cancelled"
     
   
 

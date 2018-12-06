@@ -508,8 +508,13 @@ demo = {
 function manageflight(){
 
     var container = document.getElementById("admincontainer");
-    container.innerHTML = `<h3>Add flights</h3>
+    container.innerHTML = `<form action="/addFlight" method="POST">
+    <h3>Add flights</h3>
     <div class = "row">
+            <div id = "container1" class="form-group">
+                    <label for="usr">Flight ID </label>
+                    <input type="text" class="form-control" id="flightid" name="flight_id">
+                  </div>
         <div id = "container1" class="form-group">
             <label for="usr">Airline </label>
             <input type="text" class="form-control" id="flightid" name="airline">
@@ -525,21 +530,38 @@ function manageflight(){
     </div>
     <div class="row">
             <div id = "container1" class="form-group">
-                    <label for="usr">Price </label>
-                    <input type="text" class="form-control" id="flightid" name="airline">
+                    <label for="usr">Economy Price </label>
+                    <input type="text" class="form-control" id="flightid" name="eprice">
                   </div>
                   <div id = "container1" class="form-group">
-                    <label for="pwd">Capacity</label>
-                    <input type="text" class="form-control" id="numberticket" name="departure">
-                </div>
-                <div>
-                        <button id="go" type="button" class="btn btn-default" onclick="addFlightClick()">
-                          <span class="glyphicon glyphicon-search"></span> ADD FLIGHT
-                        </button>
+                        <label for="usr">Business Price </label>
+                        <input type="text" class="form-control" id="flightid" name="bprice">
                       </div>
+                  <div id = "container1" class="form-group">
+                    <label for="pwd">Capacity</label>
+                    <input type="text" class="form-control" id="numberticket" name="capacity">
+                </div>
+                <div id = "container1" class="form-group">
+                        <label for="pwd">Departure Time</label>
+                        <input type="time" class="form-control" id="numberticket" name="dTime">
+                    </div>
 
     </div>
+        <div class="row">
+                <div id = "container1" class="form-group">
+                        <label for="pwd">Departure Date</label>
+                        <input type="date" class="form-control" id="numberticket" name="dDate">
+                    </div>
+                    <div>
+                            <button id="go" type="submit" class="btn btn-default" onclick="addFlightClick()">
+                            <span class="glyphicon glyphicon-search"></span> ADD FLIGHT
+                            </button>
+                    </div>
 
+    </div>
+</form>
+
+<form action="/removeFlight" method="POST">
 
     <h3>Remove flights</h3>
     <div class = "row">
@@ -558,14 +580,22 @@ function manageflight(){
         </div>
         <div class="row">
          
+                <div id = "container1" class="form-group">
+                        <label for="pwd">Departure Date</label>
+                        <input type="date" class="form-control" id="numberticket" name="dDate">
+                    </div>
+
+    </div>
+        <div class="row">
+         
                     <div>
-                            <button id="go" type="button" class="btn btn-default" onclick="removeFlightClick()">
+                            <button id="go" type="submit" class="btn btn-default" >
                               <span class="glyphicon glyphicon-search"></span> REMOVE FLIGHT
                             </button>
                           </div>
 
         </div>
-                                    `
+    </form>             `
 
 }
 

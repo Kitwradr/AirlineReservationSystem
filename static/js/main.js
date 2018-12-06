@@ -111,15 +111,12 @@ function loginClick(){
 
 function searchClick(){
 
-    var dateReg = /^\d{2}[./-]\d{2}[./-]\d{4}$/ ;
+    var dateReg = /^\d{4}[./-]\d{2}[./-]\d{2}$/ ;
 
     var departure =  document.getElementById("departure").value;
     var destination = document.getElementById("destination").value;
     var date = document.getElementById("date").value;
     console.log(departure,destination,date);
-    var condition = false;
-
- 
 
     if(departure.length ==0){
         alert('Enter departure');
@@ -138,17 +135,41 @@ function searchClick(){
 
     if(date.match(dateReg)){
 
+        console.log(date[0],date[1],date[3],date[4],date[6],date[7],date[8],date[9])
+
+        date = date[6]+date[7]+date[8]+date[9]+'-'+date[3]+date[4]+'-'+date[0]+date[1]
+        console.log(date)
+
     }
     else{
         alert('Incorrect date format . Re Enter date!')
         return;
     }
 
-    //var json_obj = JSON.parse(Get("https://localhost:5000/dbhandling/displayflights"))
+  
 
-    var tbdy = this.document.getElementById("tablebody") ;
-    tbdy.innerHTML="";
+    // $.post("/displayflights",
+    // {'source':departure,'destination':destination,'date':date})
+    // function(data, status){
+    //     alert("Data: " + data + "\nStatus: " + status);
 
+    //     obj = JSON.parse(data);
+
+        // for(var k=0 ; len =obj.length;k<len,++k){
+        //     var flight = obj[k];
+        //     console.log(flight);
+
+        //     var newRow = tbdy.insertRow(tbdy.rows.length);
+
+        //     var newCell = newRow.insertCell(0)
+
+        //     var newText = document.createTextNode(flight.)
+
+        // }
+       
+       
+
+    // });
 
 
 
@@ -209,10 +230,6 @@ function searchClick(){
     //          `;
 
     // }
-
-
-
-    
 
 }
 
