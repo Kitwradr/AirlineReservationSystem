@@ -328,41 +328,41 @@ function confirmClick(){
 
 }
 
-function pastbookings(){
+// function pastbookings(){
  
-    var container = document.getElementById("maincontainer");
+//     var container = document.getElementById("maincontainer");
 
-    $.get("/retrieveTickets",
+//     $.get("/retrieveTickets",
     
-    function(data, status){
-        alert("Data: " + data + "\nStatus: " + status);
+//     function(data, status){
+//         alert("Data: " + data + "\nStatus: " + status);
        
        
 
-    });
+//     });
 
-    container.innerHTML = null;
+//     container.innerHTML = null;
 
-    var htmlnew = `<h3>Your past bookings</h3>
-    <div id = "ticket1" class="card">
-            <h5 class="card-header">Bangalore - Mumbai</h5>
-            <div class="card-body">
-              <h5 class="card-title">15th August 2018</h5>
-                <br>
-              <button onclick="reviewExperience()" type = "button" class="btn btn-primary" >Review the experience</button>
-            </div>
-        </div>
-        <div id = "ticket2" class="card">
-                <h5 class="card-header">Mumbai - Delhi</h5>
-                <div class="card-body">
-                  <h5 class="card-title">10th January 2017</h5>
-                    <br>
-                  <button onclick="reviewExperience()" type = "button" class="btn btn-primary" >Review the experience</button>
-                </div>
-            </div>`;
-    container.innerHTML = htmlnew;
+//     var htmlnew = `<h3>Your past bookings</h3>
+//     <div id = "ticket1" class="card">
+//             <h5 class="card-header">Bangalore - Mumbai</h5>
+//             <div class="card-body">
+//               <h5 class="card-title">15th August 2018</h5>
+//                 <br>
+//               <button onclick="reviewExperience()" type = "button" class="btn btn-primary" >Review the experience</button>
+//             </div>
+//         </div>
+//         <div id = "ticket2" class="card">
+//                 <h5 class="card-header">Mumbai - Delhi</h5>
+//                 <div class="card-body">
+//                   <h5 class="card-title">10th January 2017</h5>
+//                     <br>
+//                   <button onclick="reviewExperience()" type = "button" class="btn btn-primary" >Review the experience</button>
+//                 </div>
+//             </div>`;
+//     container.innerHTML = htmlnew;
 
-}
+// }
 
 function reviewExperience(){
 

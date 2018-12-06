@@ -28,6 +28,8 @@ def welcome():
     print("inside welcome in flask")
     return render_template('index.html')
 
+
+
 @app.route('/loginClick',methods=['POST'])
 def loginClick():
     
@@ -211,6 +213,13 @@ def displayadminview():
 
     return render_template('admin.html')
 
+@app.route('/review',methods=['GET','POST'])
+def reviewpage():
+    flightid = request.args.get('flightid')
+    print("Received flight ID = "+str(flightid))
+    session['flightid'] = flightid
+    return render_template('review.html')
+
 @app.route('/retrieveReviews',methods = ['POST','GET'])
 def retrieveReviews():
     json_input = request.get_json()
@@ -283,6 +292,34 @@ def submitreview():
 
     return render_template('dashboard.html')
 
+@app.route('/pastbookings')
+def displaypastbookings():
+    print("inside display bookings")
+    if 'username' not in session:
+        session['username'] = '\"suhashe\"'
+    with sqlite3.connect('airline_reservation.db') as con:
+            try:
+                cur = con.cursor()
+                #pdb.set_trace()
+                sql_statement = """SELECT DAIR.CITY,AAIR.CITY,T.PRICE,AP.COMPANY,F.D_DATE,T.TICKETID,F.FLIGHTID
+                                FROM AIRPORT AS DAIR,AIRPORT AS AAIR, FLIGHT AS F, TICKET AS T,AIRPLANE AS AP
+                                WHERE T.PRICE>0 AND F.FLIGHTID=T.FLIGHT AND DAIR.AIRPORTCODE=F.DEPARTURE AND AAIR.AIRPORTCODE=F.ARRIVAL AND T.USERNAME="""+'"'+session['username']+'"'+" AND AP.AIRPLANEID=F.AIRPLANEID"""
+                print(sql_statement)
+                cur.execute(sql_statement)
+                tickets = cur.fetchall()
+                session['ticket_id'] = tickets[0][5]
+                print(session)
+                print(tickets)
+
+                msg = "Registered Successfully"
+            except:
+               
+                msg = "Error occured"
+            #con.close()
+            print( msg)
+            print(json.dumps(tickets))
+    return render_template('pastbooking.html',tickets = tickets)
+
 @app.route('/retrieveTickets',methods=['GET','POST'])
 def retrieveTicketsinfo():
 
@@ -294,7 +331,7 @@ def retrieveTicketsinfo():
                 #pdb.set_trace()
                 sql_statement = """SELECT DAIR.CITY,AAIR.CITY,T.PRICE,AP.COMPANY,F.D_DATE,T.TICKETID,F.FLIGHTID
                                 FROM AIRPORT AS DAIR,AIRPORT AS AAIR, FLIGHT AS F, TICKET AS T,AIRPLANE AS AP
-                                WHERE F.FLIGHTID=T.FLIGHT AND DAIR.AIRPORTCODE=F.DEPARTURE AND AAIR.AIRPORTCODE=F.ARRIVAL AND T.USERNAME="""+'"'+session['username']+'"'+" AND AP.AIRPLANEID=F.AIRPLANEID"""
+                                WHERE F.FLIGHTID=T.FLIGHT AND DAIR.AIRPORTCODE=F.DEPARTURE AND AAIR.AIRPORTCODE=F.ARRIVAL AND F.A_DATE<=DATE('now') AND T.USERNAME="""+'"'+session['username']+'"'+" AND AP.AIRPLANEID=F.AIRPLANEID"""
                 print(sql_statement)
                 
                 cur.execute(sql_statement)
@@ -325,7 +362,7 @@ def retrieveTicketsforCancel():
                 #pdb.set_trace()
                 sql_statement = """SELECT DAIR.CITY,AAIR.CITY,T.PRICE,AP.COMPANY,F.D_DATE,T.TICKETID
                                 FROM AIRPORT AS DAIR,AIRPORT AS AAIR, FLIGHT AS F, TICKET AS T,AIRPLANE AS AP
-                                WHERE T.PRICE>0 AND F.FLIGHTID=T.FLIGHT AND DAIR.AIRPORTCODE=F.DEPARTURE AND AAIR.AIRPORTCODE=F.ARRIVAL AND T.USERNAME="""+'"'+session['username']+'"'+" AND AP.AIRPLANEID=F.AIRPLANEID"""
+                                WHERE T.PRICE>0 AND F.D_DATE>=DATE('NOW') AND F.FLIGHTID=T.FLIGHT AND DAIR.AIRPORTCODE=F.DEPARTURE AND AAIR.AIRPORTCODE=F.ARRIVAL AND T.USERNAME="""+'"'+session['username']+'"'+" AND AP.AIRPLANEID=F.AIRPLANEID"""
                 print(sql_statement)
                 cur.execute(sql_statement)
                 tickets = cur.fetchall()
@@ -434,8 +471,8 @@ def addFlight():
                             FROM AIRPORT
                             WHERE CITY=? """ 
 
-                sql4 = """ INSERT INTO FLIGHT
-VALUES (?,?,?,TIME(?),?,TIME(?),DATE(?),DATE(?),ECAP,BPRICE,EPRICE) """
+                sql4 = """ INSERT INTO FLIGHT(AIRPLANEID,DEPARTURE,D_TIME,ARRIVAL,D_DATE,ECAP,BPRICE,EPRICE)
+VALUES (?,?,TIME(?),?,DATE(?),?,?,?) """
               
                 
                 cur.execute(sql2,(departure,))
@@ -448,9 +485,38 @@ VALUES (?,?,?,TIME(?),?,TIME(?),DATE(?),DATE(?),ECAP,BPRICE,EPRICE) """
 
                 cur.execute(sql1,(airline,))
                 result = cur.fetchall()
-                airline = result[0][0]
+                airline_id = result[0][0]
                 
-                print(departure_id,destination_id,airline)
+                print(departure_id,destination_id,airline_id)
+
+                cur.execute(sql4,(airline_id,departure_id,dTime, destination_id,dDate,capacity,bprice,eprice))
+            
+
+                msg = "Registered Successfully"
+            except:
+               
+                msg = "Error occured"
+            #con.close()
+            print(msg)
+
+    return "THe flight was successfully added"
+
+@app.route('/removeFlight',methods=['GET','POST'])
+def removeFlight():
+
+    flight_id = request.form['flight_id']
+    print(flight_id)
+    with sqlite3.connect('airline_reservation.db') as con:
+            try:
+                cur = con.cursor()
+                #pdb.set_trace()
+                sql_statement = """UPDATE TICKET
+                                SET PRICE = -20 WHERE
+                                TICKETID = ?"""
+                print(sql_statement)
+                
+                cur.execute(sql_statement,(session['ticket_id'],))
+                
 
                 msg = "Registered Successfully"
             except:
