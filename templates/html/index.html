@@ -30,13 +30,13 @@
 	<div class="limiter">
 		<div class="container-login100">
 			<div class="wrap-login100 p-l-50 p-r-50 p-t-77 p-b-30">
-				<form class="login100-form validate-form">
+				
 					<span class="login100-form-title p-b-55">
 						Login
 					</span>
-
+				
 					<div class="wrap-input100 validate-input m-b-16" data-validate = "Valid email is required: ex@abc.xyz">
-						<input id="loginfield" class="input100" type="text" name="email" placeholder="Email">
+						<input id="loginfield" class="input100" type="text" name="email" placeholder="Email" required>
 						<span class="focus-input100"></span>
 						<span class="symbol-input100">
 							<span class="lnr lnr-envelope"></span>
@@ -44,34 +44,28 @@
 					</div>
 
 					<div class="wrap-input100 validate-input m-b-16" data-validate = "Password is required">
-						<input id="passwordfield" class="input100" type="password" name="pass" placeholder="Password">
+						<input id="passwordfield" class="input100" type="password" name="pass" placeholder="Password" required>
 						<span class="focus-input100"></span>
 						<span class="symbol-input100">
 							<span class="lnr lnr-lock"></span>
 						</span>
 					</div>
 
-					<div class="contact100-form-checkbox m-l-4">
-						<input class="input-checkbox100" id="ckb1" type="checkbox" name="remember-me">
-						<label class="label-checkbox100" for="ckb1">
-							Remember me
-						</label>
-					</div>
+			
 				
 					
-					<div class="container-login100-form-btn p-t-25">
-						
-							<button type="submit" class="login100-form-btn">
-								<a style="color:wheat" onclick="loginClick()">Login</a>
+					<div >
+						<br> 
+							<button onclick="loginClick()" class="login100-form-btn">
+								Login
 							</button>
-							<br> <br><br>
-							<button type="submit" class="login100-form-btn">
-								<a style="color:wheat" href="/loginadmin">Login as admin</a>
+							<br> 
+							<button onclick="window.location = '/loginadmin'" class="login100-form-btn">
+								Login as admin
 							</button>
 					
 					</div>
-				</form>
-			
+				
 					<br/>
 				
 

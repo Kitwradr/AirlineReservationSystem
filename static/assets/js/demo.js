@@ -511,10 +511,7 @@ function manageflight(){
     container.innerHTML = `<form action="/addFlight" method="POST">
     <h3>Add flights</h3>
     <div class = "row">
-            <div id = "container1" class="form-group">
-                    <label for="usr">Flight ID </label>
-                    <input type="text" class="form-control" id="flightid" name="flight_id">
-                  </div>
+            
         <div id = "container1" class="form-group">
             <label for="usr">Airline </label>
             <input type="text" class="form-control" id="flightid" name="airline" required>
@@ -526,6 +523,10 @@ function manageflight(){
         <div id = "container1" class="form-group">
             <label for="pwd">Arrival Airport</label>
             <input type="text" class="form-control" id="numberticket" name="arrival" required>
+        </div>
+        <div id = "container1" class="form-group">
+            <label for="pwd">Arrival Date</label>
+            <input type="date" class="form-control" id="numberticket" name="aDate" required>
         </div>
     </div>
     <div class="row">
@@ -552,6 +553,10 @@ function manageflight(){
                         <label for="pwd">Departure Date</label>
                         <input type="date" class="form-control" id="numberticket" name="dDate" required>
                     </div>
+                    <div id = "container1" class="form-group">
+                        <label for="pwd">Arrival Time</label>
+                        <input type="time" class="form-control" id="numberticket" name="aTime" required>
+                    </div>
                     <div>
                             <button id="go" type="submit" class="btn btn-default" onclick="addFlightClick()">
                             <span class="glyphicon glyphicon-search"></span> ADD FLIGHT
@@ -561,7 +566,7 @@ function manageflight(){
     </div>
 </form>
 
-<form action="/removeFlight" method="POST">
+<form action="/removeFlight" method="POST"> 
 
 <h3>Remove flights</h3>
 <div class = "row">

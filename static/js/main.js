@@ -67,6 +67,14 @@ function loginClick(){
         alert('Fill email!')
         return;
     }
+    else {
+        var reg = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
+        if (reg.test(email) == false) 
+        {
+            alert('Invalid Email Address');
+            return false;
+        }
+    }
 
     if(password == ""){
         alert('Fill password!')
@@ -97,7 +105,7 @@ function loginClick(){
         'password':password
     },
     function(data, status){
-        alert("Data: " + data + "\nStatus: " + status);
+        console.log("Data: " + data + "\nStatus: " + status);
         if(data == "success"){
             window.location = "/dashboard.html"
         }

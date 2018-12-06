@@ -72,7 +72,7 @@ def bookingpage():
 @app.route('/cancel.html',methods=['GET','POST'])
 def cancel():
   
-    return render_template ('cancel.html') 
+    return render_template ('cancel.html')  
 
 
 @app.route('/calculatecost',methods=['GET','POST'])
@@ -449,10 +449,12 @@ def addFlight():
     eprice = request.form['eprice']
     bprice = request.form['bprice']
     dTime = request.form['dTime']
+    aTime = request.form['aTime']
     dDate = request.form['dDate']
+    aDate = request.form['aDate']
     capacity = request.form['capacity']
 
-    print(destination,departure,airline,flight_id,eprice,bprice,dTime,dDate,capacity)
+    print(destination,departure,airline,flight_id,eprice,bprice,dTime,dDate,capacity,aDate,aTime)
 
 
     with sqlite3.connect('airline_reservation.db') as con:
@@ -471,7 +473,7 @@ def addFlight():
                             FROM AIRPORT
                             WHERE CITY=? """ 
 
-                sql4 = """ INSERT INTO FLIGHT(AIRPLANEID,DEPARTURE,D_TIME,ARRIVAL,D_DATE,ECAP,BPRICE,EPRICE)
+                sql4 = """ INSERT INTO FLIGHT(AIRPLANEID,DEPARTURE,D_TIME,ARRIVAL,D_DATE,ECAP,BPRICE,EPRICE,A_TIME,A_DATE)
 VALUES (?,?,TIME(?),?,DATE(?),?,?,?) """
               
                 
@@ -489,7 +491,7 @@ VALUES (?,?,TIME(?),?,DATE(?),?,?,?) """
                 
                 print(departure_id,destination_id,airline_id)
 
-                cur.execute(sql4,(airline_id,departure_id,dTime, destination_id,dDate,capacity,bprice,eprice))
+                cur.execute(sql4,(airline_id,departure_id,dTime, destination_id,dDate,capacity,bprice,eprice,aTime,aDate))
             
 
                 msg = "Registered Successfully"
@@ -499,7 +501,7 @@ VALUES (?,?,TIME(?),?,DATE(?),?,?,?) """
             #con.close()
             print(msg)
 
-    return "THe flight was successfully added"
+    return "The flight was successfully added "
 
 @app.route('/removeFlight',methods=['GET','POST'])
 def removeFlight():
@@ -510,12 +512,14 @@ def removeFlight():
             try:
                 cur = con.cursor()
                 #pdb.set_trace()
-                sql_statement = """UPDATE TICKET
-                                SET PRICE = -20 WHERE
-                                TICKETID = ?"""
-                print(sql_statement)
-                
-                cur.execute(sql_statement,(session['ticket_id'],))
+                sql1 = """DELETE 
+                                    FROM FLIGHT
+                                    WHERE FLIGHTID = ?"""
+
+                sql2 = "DELETE FROM TICKET WHERE FLIGHT=?"
+        
+                cur.execute(sql2,(flight_id,))
+                cur.execute(sql1,(flight_id,))
                 
 
                 msg = "Registered Successfully"
@@ -525,7 +529,7 @@ def removeFlight():
             #con.close()
             print(msg)
 
-    return "The ticket was successfully cancelled"
+    return "The flight was successfully removed"
     
   
 
